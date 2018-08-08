@@ -11,6 +11,7 @@ STATUS_SUBDIR = status
 endif
 
 DIST_SUBDIRS = example
+DIST_SUBDIRS += mux
 DIST_SUBDIRS += cpu disk
 DIST_SUBDIRS += memory
 DIST_SUBDIRS += network
@@ -29,6 +30,7 @@ SUBDIRS += $(PYTHON_SUBDIR)
 SUBDIRS += $(PERL_SUBDIR)
 else
 SUBDIRS = example
+SUBDIRS += mux
 SUBDIRS += cpu
 SUBDIRS += disk
 SUBDIRS += memory
