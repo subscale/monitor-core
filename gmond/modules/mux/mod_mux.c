@@ -70,7 +70,7 @@ struct mux_metrics
     float net_callback_time_usec;
 };
 
-static const struct mux_metrics *shm = NULL;
+static struct mux_metrics *shm = NULL;
 static void open_shm()
 {
     shm = NULL;
@@ -84,8 +84,8 @@ static void open_shm()
         debug_msg("[mod_mux]Can't open shared memory handle");
         return;
     }
-    shm = (const struct mux_metrics*)shmat(shmid, NULL, 0);
-    if (shm == (const struct mux_metrics*)-1)
+    shm = (struct mux_metrics*)shmat(shmid, NULL, 0);
+    if (shm == (struct mux_metrics*)-1)
     {
         shmid = -1;
         shm = NULL;
@@ -138,33 +138,43 @@ static g_val_t ex_metric_handler ( int metric_index )
     switch (metric_index) {
     case 0:
         val.f = shm->bid_requests_per_sec;    
+        shm->bid_requests_per_sec = 0;
         break;
     case 1:
         val.f = shm->ready_requests_per_sec;    
+        shm->ready_requests_per_sec = 0;
         break;
     case 2:
         val.f = shm->avg_request_size;    
+        shm->avg_request_size = 0;
         break;
     case 3:
         val.f = shm->sum_bids;    
+        shm->sum_bids = 0;
         break;
     case 4:
         val.f = shm->active_connections;    
+        shm->active_connections = 0;
         break;
     case 5:
         val.f = shm->avg_session_time;    
+        shm->avg_session_time = 0;
         break;
     case 6:
         val.f = shm->connects_per_sec;    
+        shm->connects_per_sec = 0;
         break;
     case 7:
         val.f = shm->parquet_time;    
+        shm->parquet_time = 0;
         break;
     case 8:
         val.f = shm->rows_per_upload;    
+        shm->rows_per_upload = 0;
         break;
     case 9:
         val.f = shm->net_callback_time_usec;    
+        shm->net_callback_time_usec = 0;
         break;
     default:
         val.uint32 = 0; /* default fallback */
