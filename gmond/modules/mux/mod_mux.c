@@ -59,6 +59,8 @@ struct mux_metrics
 {
     uint32_t version;
     float bid_requests_per_sec;
+    float web_requests_per_sec;
+    float app_requests_per_sec;
     float ready_requests_per_sec;
     float avg_request_size;
     float sum_bids;
@@ -129,7 +131,7 @@ static g_val_t ex_metric_handler ( int metric_index )
 
     if (!shm)
         open_shm();
-    if (!shm || shm->version != 1)
+    if (!shm || shm->version != 2)
     {
         val.f = 0;
         return val;
@@ -141,38 +143,46 @@ static g_val_t ex_metric_handler ( int metric_index )
         shm->bid_requests_per_sec = 0;
         break;
     case 1:
+        val.f = shm->web_requests_per_sec;    
+        shm->web_requests_per_sec = 0;
+        break;
+    case 2:
+        val.f = shm->app_requests_per_sec;    
+        shm->app_requests_per_sec = 0;
+        break;
+    case 3:
         val.f = shm->ready_requests_per_sec;    
         shm->ready_requests_per_sec = 0;
         break;
-    case 2:
+    case 4:
         val.f = shm->avg_request_size;    
         shm->avg_request_size = 0;
         break;
-    case 3:
+    case 5:
         val.f = shm->sum_bids;    
         shm->sum_bids = 0;
         break;
-    case 4:
+    case 6:
         val.f = shm->active_connections;    
         shm->active_connections = 0;
         break;
-    case 5:
+    case 7:
         val.f = shm->avg_session_time;    
         shm->avg_session_time = 0;
         break;
-    case 6:
+    case 8:
         val.f = shm->connects_per_sec;    
         shm->connects_per_sec = 0;
         break;
-    case 7:
+    case 9:
         val.f = shm->parquet_time;    
         shm->parquet_time = 0;
         break;
-    case 8:
+    case 10:
         val.f = shm->rows_per_upload;    
         shm->rows_per_upload = 0;
         break;
-    case 9:
+    case 11:
         val.f = shm->net_callback_time_usec;    
         shm->net_callback_time_usec = 0;
         break;
@@ -187,6 +197,8 @@ static g_val_t ex_metric_handler ( int metric_index )
 static Ganglia_25metric ex_metric_info[] = 
 {
     {0, "bid_requests_per_sec",   20, GANGLIA_VALUE_FLOAT, "Rps",   "both", "%.1f", UDP_HEADER_SIZE+8, "Bid requests per second"},
+    {0, "web_requests_per_sec",   20, GANGLIA_VALUE_FLOAT, "Rps",   "both", "%.1f", UDP_HEADER_SIZE+8, "Web requests per second"},
+    {0, "app_requests_per_sec",   20, GANGLIA_VALUE_FLOAT, "Rps",   "both", "%.1f", UDP_HEADER_SIZE+8, "App requests per second"},
     {0, "ready_requests_per_sec", 20, GANGLIA_VALUE_FLOAT, "Rps",   "both", "%.1f", UDP_HEADER_SIZE+8, "Ready requests per second"},
     {0, "avg_request_size",       20, GANGLIA_VALUE_FLOAT, "Bytes", "both", "%.1f", UDP_HEADER_SIZE+8, "Avg request size"},
     {0, "sum_bids",               20, GANGLIA_VALUE_FLOAT, "USC",   "both", "%.1f", UDP_HEADER_SIZE+8, "Sum bids sent"},
