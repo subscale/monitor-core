@@ -55,10 +55,41 @@ static int shmid = -1;
 struct cppmr_metrics
 {
     uint32_t version;
-    uint32_t input_files_found;
-    uint32_t input_files_read;
+    int64_t input_files_found;
+    int64_t input_files_read;
+    float input_bps;
+    int64_t input_bytes;
+    float temp_bps;
+    int64_t temp_bytes;
+    int64_t temp_files;
+    int64_t temp_chunks;
+    int64_t output_files;
+    float reduce_bps;
+    int64_t reduce_bytes;
+    float output_bps;
+    int64_t output_bytes;
+    float http_in_bps;
+    int64_t http_in_bytes;
+    float http_out_bps;
+    int64_t http_out_bytes;
+    int64_t rows_in;
+    float rows_in_rate;
+    int64_t rows_map;
+    float rows_map_rate;
+    int64_t rows_combine;
+    float rows_combine_rate;
+    int64_t rows_temp;
+    float rows_temp_rate;
+    int64_t rows_reduce;
+    float rows_reduce_rate;
+    int64_t rows_output;
+    float rows_output_rate;
+    int64_t heap_size;
+    int64_t heap_count;
+    float map_progress_pct;
+    float reduce_progress_pct;
+    float job_progress_pct;
 };
-
 static struct cppmr_metrics *shm = NULL;
 static void open_shm()
 {
@@ -157,17 +188,17 @@ static Ganglia_25metric ex_metric_info[] =
     {0, "http_out_bps",           20, GANGLIA_VALUE_FLOAT, "Bytes/sec",    "both", "%.1f", UDP_HEADER_SIZE+8, "HTTP OUT bytes/sec"},
     {0, "http_out_bytes",         20, GANGLIA_VALUE_FLOAT, "Bytes",        "both", "%.1f", UDP_HEADER_SIZE+8, "HTTP OUT bytes"},
     {0, "rows_in",                20, GANGLIA_VALUE_FLOAT, "Rows",         "both", "%.1f", UDP_HEADER_SIZE+8, "Rows read"},
-    {0, "rows_in_speed",          20, GANGLIA_VALUE_FLOAT, "Rows/sec",     "both", "%.1f", UDP_HEADER_SIZE+8, "Rows read per second"},
+    {0, "rows_in_rate",           20, GANGLIA_VALUE_FLOAT, "Rows/sec",     "both", "%.1f", UDP_HEADER_SIZE+8, "Rows read per second"},
     {0, "rows_map",               20, GANGLIA_VALUE_FLOAT, "Rows",         "both", "%.1f", UDP_HEADER_SIZE+8, "Rows map"},
-    {0, "rows_map_speed",         20, GANGLIA_VALUE_FLOAT, "Rows/sec",     "both", "%.1f", UDP_HEADER_SIZE+8, "Rows map per second"},
+    {0, "rows_map_rate",          20, GANGLIA_VALUE_FLOAT, "Rows/sec",     "both", "%.1f", UDP_HEADER_SIZE+8, "Rows map per second"},
     {0, "rows_combine",           20, GANGLIA_VALUE_FLOAT, "Rows",         "both", "%.1f", UDP_HEADER_SIZE+8, "Rows combine"},
-    {0, "rows_combine_speed",     20, GANGLIA_VALUE_FLOAT, "Rows/sec",     "both", "%.1f", UDP_HEADER_SIZE+8, "Rows combine per second"},
+    {0, "rows_combine_rate",      20, GANGLIA_VALUE_FLOAT, "Rows/sec",     "both", "%.1f", UDP_HEADER_SIZE+8, "Rows combine per second"},
     {0, "rows_temp",              20, GANGLIA_VALUE_FLOAT, "Rows",         "both", "%.1f", UDP_HEADER_SIZE+8, "Rows temp"},
-    {0, "rows_temp_speed",        20, GANGLIA_VALUE_FLOAT, "Rows/sec",     "both", "%.1f", UDP_HEADER_SIZE+8, "Rows temp per second"},
+    {0, "rows_temp_rate",         20, GANGLIA_VALUE_FLOAT, "Rows/sec",     "both", "%.1f", UDP_HEADER_SIZE+8, "Rows temp per second"},
     {0, "rows_reduce",            20, GANGLIA_VALUE_FLOAT, "Rows",         "both", "%.1f", UDP_HEADER_SIZE+8, "Rows reduce"},
-    {0, "rows_reduce_speed",      20, GANGLIA_VALUE_FLOAT, "Rows/sec",     "both", "%.1f", UDP_HEADER_SIZE+8, "Rows reduce per second"},
+    {0, "rows_reduce_rate",       20, GANGLIA_VALUE_FLOAT, "Rows/sec",     "both", "%.1f", UDP_HEADER_SIZE+8, "Rows reduce per second"},
     {0, "rows_output",            20, GANGLIA_VALUE_FLOAT, "Rows",         "both", "%.1f", UDP_HEADER_SIZE+8, "Rows output"},
-    {0, "rows_output_speed",      20, GANGLIA_VALUE_FLOAT, "Rows/sec",     "both", "%.1f", UDP_HEADER_SIZE+8, "Rows output per second"},
+    {0, "rows_output_rate",       20, GANGLIA_VALUE_FLOAT, "Rows/sec",     "both", "%.1f", UDP_HEADER_SIZE+8, "Rows output per second"},
     {0, "heap_size",              20, GANGLIA_VALUE_FLOAT, "Bytes",        "both", "%.1f", UDP_HEADER_SIZE+8, "Heap blocks size, bytes"},
     {0, "heap_count",             20, GANGLIA_VALUE_UNSIGNED_INT, "Num",   "both", "%u", UDP_HEADER_SIZE+8, "Heap blocks count"},
     {0, "map_progress",           20, GANGLIA_VALUE_FLOAT, "%",            "both", "%.1f", UDP_HEADER_SIZE+8, "Map stage progress"},
