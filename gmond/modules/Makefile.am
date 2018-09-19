@@ -12,6 +12,7 @@ endif
 
 DIST_SUBDIRS = example
 DIST_SUBDIRS += mux
+DIST_SUBDIRS += cppmr
 DIST_SUBDIRS += cpu disk
 DIST_SUBDIRS += memory
 DIST_SUBDIRS += network
@@ -31,6 +32,7 @@ SUBDIRS += $(PERL_SUBDIR)
 else
 SUBDIRS = example
 SUBDIRS += mux
+SUBDIRS += cppmr
 SUBDIRS += cpu
 SUBDIRS += disk
 SUBDIRS += memory
