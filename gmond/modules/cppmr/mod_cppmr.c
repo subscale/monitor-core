@@ -172,6 +172,7 @@ static Ganglia_25metric ex_metric_info[] =
     {0, "heap_count",             20, GANGLIA_VALUE_UNSIGNED_INT, "Num",   "both", "%u", UDP_HEADER_SIZE+8, "Heap blocks count"},
     {0, "map_progress",           20, GANGLIA_VALUE_FLOAT, "%",            "both", "%.1f", UDP_HEADER_SIZE+8, "Map stage progress"},
     {0, "reduce_progress",        20, GANGLIA_VALUE_FLOAT, "%",            "both", "%.1f", UDP_HEADER_SIZE+8, "Reduce stage progress"},
+    {0, "job_progress",           20, GANGLIA_VALUE_FLOAT, "%",            "both", "%.1f", UDP_HEADER_SIZE+8, "Job stage progress"},
     {0, NULL}
 };
 
