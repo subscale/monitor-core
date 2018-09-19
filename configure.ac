@@ -879,6 +879,7 @@ AC_OUTPUT(Makefile
           gmond/modules/Makefile
           gmond/modules/example/Makefile
           gmond/modules/mux/Makefile
+          gmond/modules/cppmr/Makefile
           gmond/modules/cpu/Makefile
           gmond/modules/disk/Makefile
           gmond/modules/memory/Makefile
