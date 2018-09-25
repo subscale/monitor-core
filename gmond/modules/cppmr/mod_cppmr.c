@@ -350,8 +350,8 @@ static Ganglia_25metric ex_metric_info[] =
     {0, "rows_in_rate",           20, GANGLIA_VALUE_FLOAT, "Rows/sec",     "both", "%.1f", UDP_HEADER_SIZE+8, "Rows read per second"},
     {0, "rows_map",               20, GANGLIA_VALUE_FLOAT, "Rows",         "both", "%.1f", UDP_HEADER_SIZE+8, "Rows map"},
     {0, "rows_map_rate",          20, GANGLIA_VALUE_FLOAT, "Rows/sec",     "both", "%.1f", UDP_HEADER_SIZE+8, "Rows map per second"},
-    {0, "rows_combine",           20, GANGLIA_VALUE_FLOAT, "Rows",         "both", "%.1f", UDP_HEADER_SIZE+8, "Rows combine"},
-    {0, "rows_combine_rate",      20, GANGLIA_VALUE_FLOAT, "Rows/sec",     "both", "%.1f", UDP_HEADER_SIZE+8, "Rows combine per second"},
+    {0, "rows_combine",           20, GANGLIA_VALUE_FLOAT, "Rows",         "both", "%.1f", UDP_HEADER_SIZE+8, "Rows combined"},
+    {0, "rows_combine_rate",      20, GANGLIA_VALUE_FLOAT, "Rows/sec",     "both", "%.1f", UDP_HEADER_SIZE+8, "Rows combined per second"},
     {0, "rows_temp",              20, GANGLIA_VALUE_FLOAT, "Rows",         "both", "%.1f", UDP_HEADER_SIZE+8, "Rows temp"},
     {0, "rows_temp_rate",         20, GANGLIA_VALUE_FLOAT, "Rows/sec",     "both", "%.1f", UDP_HEADER_SIZE+8, "Rows temp per second"},
     {0, "rows_reduce",            20, GANGLIA_VALUE_FLOAT, "Rows",         "both", "%.1f", UDP_HEADER_SIZE+8, "Rows reduce"},
@@ -362,7 +362,7 @@ static Ganglia_25metric ex_metric_info[] =
     {0, "heap_count",             20, GANGLIA_VALUE_UNSIGNED_INT, "Num",   "both", "%u", UDP_HEADER_SIZE+8, "Heap blocks count"},
     {0, "map_progress",           20, GANGLIA_VALUE_FLOAT, "%",            "both", "%.1f", UDP_HEADER_SIZE+8, "Map stage progress"},
     {0, "reduce_progress",        20, GANGLIA_VALUE_FLOAT, "%",            "both", "%.1f", UDP_HEADER_SIZE+8, "Reduce stage progress"},
-    {0, "job_progress",           20, GANGLIA_VALUE_FLOAT, "%",            "both", "%.1f", UDP_HEADER_SIZE+8, "Job stage progress"},
+    {0, "job_progress",           20, GANGLIA_VALUE_FLOAT, "%",            "both", "%.1f", UDP_HEADER_SIZE+8, "Overall progress"},
     {0, NULL}
 };
 
