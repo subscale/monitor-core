@@ -63,6 +63,10 @@ struct cppmr_metrics
     int64_t temp_bytes;
     int64_t temp_files;
     int64_t temp_chunks;
+    float merge_bps;
+    int64_t merge_bytes;
+    int64_t merge_files;
+    int64_t merge_chunks;
     int64_t output_files;
     float reduce_bps;
     int64_t reduce_bytes;
@@ -80,6 +84,10 @@ struct cppmr_metrics
     float rows_combine_rate;
     int64_t rows_temp;
     float rows_temp_rate;
+    int64_t rows_merge_in;
+    float rows_merge_in_rate;
+    int64_t rows_merge_out;
+    float rows_merge_out_rate;
     int64_t rows_reduce;
     float rows_reduce_rate;
     int64_t rows_output;
@@ -90,6 +98,9 @@ struct cppmr_metrics
     float reduce_progress_pct;
     float job_progress_pct;
 };
+
+
+
 static struct cppmr_metrics *shm = NULL;
 static void open_shm()
 {
@@ -161,6 +172,150 @@ static g_val_t ex_metric_handler ( int metric_index )
         val.uint32 = shm->input_files_read;    
         shm->input_files_read = 0;
         break;
+    case 2:
+        val.f = shm->input_bps;    
+        shm->input_bps = 0;
+        break;
+    case 3:
+        val.f = shm->input_bytes;    
+        shm->input_bytes = 0;
+        break;
+    case 4:
+        val.f = shm->temp_bps;    
+        shm->temp_bps = 0;
+        break;
+    case 5:
+        val.f = shm->temp_bytes;    
+        shm->temp_bytes = 0;
+        break;
+    case 6:
+        val.uint32 = shm->temp_files;    
+        shm->temp_files = 0;
+        break;
+    case 7:
+        val.uint32 = shm->temp_chunks;    
+        shm->temp_chunks = 0;
+        break;
+    case 8:
+        val.f = shm->merge_bps;    
+        shm->merge_bps = 0;
+        break;
+    case 9:
+        val.f = shm->merge_bytes;    
+        shm->merge_bytes = 0;
+        break;
+    case 10:
+        val.uint32 = shm->merge_files;    
+        shm->merge_files = 0;
+        break;
+    case 11:
+        val.uint32 = shm->merge_chunks;    
+        shm->merge_chunks = 0;
+        break;
+    case 12:
+        val.uint32 = shm->output_files;    
+        shm->output_files = 0;
+        break;
+    case 13:
+        val.f = shm->reduce_bps;    
+        shm->reduce_bps = 0;
+        break;
+    case 14:
+        val.f = shm->reduce_bytes;    
+        shm->reduce_bytes = 0;
+        break;
+    case 15:
+        val.f = shm->output_bps;    
+        shm->output_bps = 0;
+        break;
+    case 16:
+        val.f = shm->output_bytes;    
+        shm->output_bytes = 0;
+        break;
+    case 17:
+        val.f = shm->http_in_bps;    
+        shm->http_in_bps = 0;
+        break;
+    case 18:
+        val.f = shm->http_in_bytes;    
+        shm->http_in_bytes = 0;
+        break;
+    case 19:
+        val.f = shm->http_out_bps;    
+        shm->http_out_bps = 0;
+        break;
+    case 20:
+        val.f = shm->http_out_bytes;    
+        shm->http_out_bytes = 0;
+        break;
+    case 21:
+        val.f = shm->rows_in;    
+        shm->rows_in = 0;
+        break;
+    case 22:
+        val.f = shm->rows_in_rate;    
+        shm->rows_in_rate = 0;
+        break;
+    case 23:
+        val.f = shm->rows_map;    
+        shm->rows_map = 0;
+        break;
+    case 24:
+        val.f = shm->rows_map_rate;    
+        shm->rows_map_rate = 0;
+        break;
+    case 25:
+        val.f = shm->rows_combine;    
+        shm->rows_combine = 0;
+        break;
+    case 26:
+        val.f = shm->rows_combine_rate;    
+        shm->rows_combine_rate = 0;
+        break;
+    case 27:
+        val.f = shm->rows_temp;    
+        shm->rows_temp = 0;
+        break;
+    case 28:
+        val.f = shm->rows_temp_rate;    
+        shm->rows_temp_rate = 0;
+        break;
+    case 29:
+        val.f = shm->rows_reduce;    
+        shm->rows_reduce = 0;
+        break;
+    case 30:
+        val.f = shm->rows_reduce_rate;    
+        shm->rows_reduce_rate = 0;
+        break;
+    case 31:
+        val.f = shm->rows_output;    
+        shm->rows_output = 0;
+        break;
+    case 32:
+        val.f = shm->rows_output_rate;    
+        shm->rows_output_rate = 0;
+        break;
+    case 33:
+        val.f = shm->heap_size;    
+        shm->heap_size = 0;
+        break;
+    case 34:
+        val.uint32 = shm->heap_count;    
+        shm->heap_count = 0;
+        break;
+    case 35:
+        val.f = shm->map_progress_pct;    
+        shm->map_progress_pct = 0;
+        break;
+    case 36:
+        val.f = shm->reduce_progress_pct;    
+        shm->reduce_progress_pct = 0;
+        break;
+    case 37:
+        val.f = shm->job_progress_pct;    
+        shm->job_progress_pct = 0;
+        break;
     default:
         val.uint32 = 0;
     }
@@ -173,11 +328,15 @@ static Ganglia_25metric ex_metric_info[] =
     {0, "input_files_found",      20, GANGLIA_VALUE_UNSIGNED_INT, "Num",   "both", "%u", UDP_HEADER_SIZE+8, "Number of input files discovered"},
     {0, "input_files_read",       20, GANGLIA_VALUE_UNSIGNED_INT, "Num",   "both", "%u", UDP_HEADER_SIZE+8, "Number of input files successfully processed"},
     {0, "input_bps",              20, GANGLIA_VALUE_FLOAT, "Bytes/sec",    "both", "%.1f", UDP_HEADER_SIZE+8, "Read bytes/sec"},
-    {0, "input_bytes",            20, GANGLIA_VALUE_FLOAT, "Bytes",        "both", "%.1f", UDP_HEADER_SIZE+8, "Read bytes"},
+    {0, "input_bytes",            20, GANGLIA_VALUE_FLOAT, "Bytes",        "both", "%.0f", UDP_HEADER_SIZE+8, "Read bytes"},
     {0, "temp_bps",               20, GANGLIA_VALUE_FLOAT, "Bytes/sec",    "both", "%.1f", UDP_HEADER_SIZE+8, "Temp bytes/sec"},
     {0, "temp_bytes",             20, GANGLIA_VALUE_FLOAT, "Bytes",        "both", "%.1f", UDP_HEADER_SIZE+8, "Temp bytes"},
     {0, "temp_files",             20, GANGLIA_VALUE_UNSIGNED_INT, "Num",   "both", "%u", UDP_HEADER_SIZE+8, "Temp files count"},
     {0, "temp_chunks",            20, GANGLIA_VALUE_UNSIGNED_INT, "Num",   "both", "%u", UDP_HEADER_SIZE+8, "Temp chunks count"},
+    {0, "merge_bps",              20, GANGLIA_VALUE_FLOAT, "Bytes/sec",    "both", "%.1f", UDP_HEADER_SIZE+8, "Merge bytes/sec"},
+    {0, "merge_bytes",            20, GANGLIA_VALUE_FLOAT, "Bytes",        "both", "%.1f", UDP_HEADER_SIZE+8, "Merge bytes"},
+    {0, "merge_files",            20, GANGLIA_VALUE_UNSIGNED_INT, "Num",   "both", "%u", UDP_HEADER_SIZE+8, "Merge files count"},
+    {0, "merge_chunks",           20, GANGLIA_VALUE_UNSIGNED_INT, "Num",   "both", "%u", UDP_HEADER_SIZE+8, "Merge chunks count"},
     {0, "output_files",           20, GANGLIA_VALUE_UNSIGNED_INT, "Num",   "both", "%u", UDP_HEADER_SIZE+8, "Output files count"},
     {0, "reduce_bps",             20, GANGLIA_VALUE_FLOAT, "Bytes/sec",    "both", "%.1f", UDP_HEADER_SIZE+8, "Reduce bytes/sec"},
     {0, "reduce_bytes",           20, GANGLIA_VALUE_FLOAT, "Bytes",        "both", "%.1f", UDP_HEADER_SIZE+8, "Reduce bytes"},
