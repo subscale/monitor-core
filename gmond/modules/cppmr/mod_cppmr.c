@@ -54,7 +54,7 @@ static int shmid = -1;
 
     struct cppmr_metrics
     {
-        uint32_t version = 0;
+        uint32_t version;
         int64_t input_files_found;
         int64_t input_files_read;
         float input_bps;
