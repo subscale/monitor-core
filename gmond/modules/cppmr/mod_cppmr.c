@@ -52,52 +52,58 @@ static key_t key = 7291192;
 static int shmid = -1;
 #define SHMSZ     1024
 
-struct cppmr_metrics
-{
-    uint32_t version;
-    int64_t input_files_found;
-    int64_t input_files_read;
-    float input_bps;
-    int64_t input_bytes;
-    float temp_bps;
-    int64_t temp_bytes;
-    int64_t temp_files;
-    int64_t temp_chunks;
-    float merge_bps;
-    int64_t merge_bytes;
-    int64_t merge_files;
-    int64_t merge_chunks;
-    int64_t output_files;
-    float reduce_bps;
-    int64_t reduce_bytes;
-    float output_bps;
-    int64_t output_bytes;
-    float http_in_bps;
-    int64_t http_in_bytes;
-    float http_out_bps;
-    int64_t http_out_bytes;
-    int64_t rows_in;
-    float rows_in_rate;
-    int64_t rows_map;
-    float rows_map_rate;
-    int64_t rows_combine;
-    float rows_combine_rate;
-    int64_t rows_temp;
-    float rows_temp_rate;
-    int64_t rows_merge_in;
-    float rows_merge_in_rate;
-    int64_t rows_merge_out;
-    float rows_merge_out_rate;
-    int64_t rows_reduce;
-    float rows_reduce_rate;
-    int64_t rows_output;
-    float rows_output_rate;
-    int64_t heap_size;
-    int64_t heap_count;
-    float map_progress_pct;
-    float reduce_progress_pct;
-    float job_progress_pct;
-};
+    struct cppmr_metrics
+    {
+        uint32_t version = 0;
+        int64_t input_files_found;
+        int64_t input_files_read;
+        float input_bps;
+        int64_t input_bytes;
+        float temp_bps;
+        int64_t temp_bytes;
+        int64_t temp_files;
+        int64_t temp_chunks;
+        float merge_bps;
+        int64_t merge_bytes;
+        int64_t merge_files;
+        int64_t merge_chunks;
+        int64_t output_files;
+        float reduce_bps;
+        int64_t reduce_bytes;
+        float output_bps;
+        int64_t output_bytes;
+        float http_in_bps;
+        int64_t http_in_bytes;
+        float http_out_bps;
+        int64_t http_out_bytes;
+        int64_t rows_in;
+        float rows_in_rate;
+        int64_t rows_map;
+        float rows_map_rate;
+        int64_t rows_combine;
+        float rows_combine_rate;
+        int64_t rows_temp;
+        float rows_temp_rate;
+        int64_t rows_merge_in;
+        float rows_merge_in_rate;
+        int64_t rows_merge_out;
+        float rows_merge_out_rate;
+        int64_t rows_reduce;
+        float rows_reduce_rate;
+        int64_t rows_output;
+        float rows_output_rate;
+        int64_t heap_size;
+        int64_t heap_count;
+        float map_progress_pct;
+        float reduce_progress_pct;
+        float job_progress_pct;
+        int64_t mempool_size;
+        uint32_t mempool_count;
+        uint32_t reduce_in_files;
+        uint32_t reduce_in_chunks;
+        uint32_t reduce_done_chunks;
+    };
+
 
 
 
@@ -157,7 +163,7 @@ static g_val_t ex_metric_handler ( int metric_index )
 
     if (!shm)
         open_shm();
-    if (!shm || shm->version != 1)
+    if (!shm || shm->version != 2)
     {
         val.f = 0;
         return val;
@@ -316,6 +322,26 @@ static g_val_t ex_metric_handler ( int metric_index )
         val.f = shm->job_progress_pct;    
         shm->job_progress_pct = 0;
         break;
+    case 38:
+        val.f = shm->mempool_size;    
+        shm->mempool_size = 0;
+        break;
+    case 39:
+        val.uint32 = shm->mempool_count;    
+        shm->mempool_count = 0;
+        break;
+    case 40:
+        val.uint32 = shm->reduce_in_files;    
+        shm->reduce_in_files = 0;
+        break;
+    case 41:
+        val.uint32 = shm->reduce_in_chunks;    
+        shm->reduce_in_chunks = 0;
+        break;
+    case 42:
+        val.uint32 = shm->reduce_done_chunks;    
+        shm->reduce_done_chunks = 0;
+        break;
     default:
         val.uint32 = 0;
     }
@@ -362,7 +388,12 @@ static Ganglia_25metric ex_metric_info[] =
     {0, "heap_count",             20, GANGLIA_VALUE_UNSIGNED_INT, "Num",   "both", "%u", UDP_HEADER_SIZE+8, "Heap blocks count"},
     {0, "map_progress",           20, GANGLIA_VALUE_FLOAT, "%",            "both", "%.1f", UDP_HEADER_SIZE+8, "Map stage progress"},
     {0, "reduce_progress",        20, GANGLIA_VALUE_FLOAT, "%",            "both", "%.1f", UDP_HEADER_SIZE+8, "Reduce stage progress"},
-    {0, "job_progress",           20, GANGLIA_VALUE_FLOAT, "%",            "both", "%.1f", UDP_HEADER_SIZE+8, "Overall progress"},
+    {0, "job_progress",           20, GANGLIA_VALUE_FLOAT, "Bytes",            "both", "%.1f", UDP_HEADER_SIZE+8, "Overall progress"},
+    {0, "mempool_size",           20, GANGLIA_VALUE_UNSIGNED_INT, "Num",        "both", "%u", UDP_HEADER_SIZE+8, "Memory bool size, bytes"},
+    {0, "mempool_count",          20, GANGLIA_VALUE_UNSIGNED_INT, "Num",   "both", "%u", UDP_HEADER_SIZE+8, "Memory pool buffers count"},
+    {0, "reduce_in_files",        20, GANGLIA_VALUE_UNSIGNED_INT, "Num",   "both", "%u", UDP_HEADER_SIZE+8, "Files for reduce input"},
+    {0, "reduce_in_chunks",       20, GANGLIA_VALUE_UNSIGNED_INT, "Num",   "both", "%u", UDP_HEADER_SIZE+8, "Chunks for reduce intput"},
+    {0, "reduce_done_chunks",     20, GANGLIA_VALUE_UNSIGNED_INT, "Num",   "both", "%u", UDP_HEADER_SIZE+8, "Reduced chunks"},
     {0, NULL}
 };
 
